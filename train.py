@@ -34,8 +34,13 @@ for g in glob.glob(fft_glob):
 for f in filenames:
     X_train = np.load(f+'_x.npy')
     y_train = np.load(f+'_y.npy')
-    weight_file = os.path.join(weights_dir, f+'.hdf5')
+    filename = f.split('/')[-1]
+    weight_file = os.path.join(weights_dir, filename+'.hdf5')
 
+    print(weight_file)
     model = nntools.build_lstm_network(X_train.shape[2], 2048)
+    if os.path.exists(weight_file):
+	model.load_weights(weight_file)
+	print("Loaded previous weights...")
     checkpointer = ModelCheckpoint(filepath=weight_file, verbose=1, save_best_only=True)
-    model.fit(X_train, y_train, nb_epoch=20000, validation_split=0.2, batch_size=128)
+    model.fit(X_train, y_train, nb_epoch=100000, validation_split=0.2, batch_size=128, callbacks=[checkpointer])

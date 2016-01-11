@@ -10,7 +10,6 @@ import os, glob
 import numpy as np
 
 from scipy.io import wavfile
-from simpleprogressbar import simpleprogressbar
 
 class datatools(object):
 
@@ -85,7 +84,8 @@ class datatools(object):
             Y_train = np.zeros((training_instances, freq_bins))
 
             while start_index+seql+1 < len(block_lists):
-                print(start_index)
+                print(str(start_index)+"/"+str(len(block_lists)-seql))
+
                 for i in range(seql):
                     for j in range(freq_bins):
                         X_train[start_index][i][j] = block_lists[start_index+i][j]

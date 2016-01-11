@@ -24,7 +24,7 @@ test: clean convert copyffttogen reconstruct
 
 .PHONY: clean
 clean:
-	@rm -rf ./data/tmp ./data/wav ./data/fft ./data/gen ./data/out
+	@rm -rf ./data/tmp ./data/wav ./data/fft ./data/gen ./data/out ./data/plot
 
 spectrogram:
 	@python -Wignore spectrogram.py

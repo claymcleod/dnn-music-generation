@@ -7,6 +7,6 @@
 def get_config():
     config = {}
     config['data_dir'] = './data'
-    config['block_size'] = 44100 // 10
+    config['block_size'] = 44100 // 8
     config['seql'] = 20
     return config

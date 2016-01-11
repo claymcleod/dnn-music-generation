@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2016 Clay L. McLeod <clay.l.mcleod@gmail.com>
@@ -11,5 +12,8 @@ from tools.datatools import datatools
 
 _config = config.get_config()
 data_dir = _config['data_dir']
+block_size = _config['block_size']
+seql = _config['seql']
+
 datatools.convert_mp3s_to_wav(data_dir)
-datatools.convert_wav_to_fft(data_dir)
+datatools.convert_wav_to_fft(data_dir, block_size, seql)

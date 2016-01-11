@@ -8,9 +8,9 @@ from __future__ import print_function
 
 import os, glob
 import numpy as np
-from scipy.io import wavfile
 
-block_size = 2048
+from scipy.io import wavfile
+from simpleprogressbar import simpleprogressbar
 
 class datatools(object):
 
@@ -21,9 +21,6 @@ class datatools(object):
 
     @staticmethod
     def convert_mp3s_to_wav(data_dir):
-        '''
-        Credits to this method go to https://github.com/MattVitelli/GRUV/
-        '''
 
         tmp_dir = os.path.join(data_dir, 'tmp')
         wav_dir = os.path.join(data_dir, 'wav')
@@ -50,10 +47,12 @@ class datatools(object):
             os.system(cmd)
 
     @staticmethod
-    def convert_wav_to_fft(data_dir):
+    def convert_wav_to_fft(data_dir, block_size, seql):
 
         fft_dir = os.path.join(data_dir, 'fft')
         datatools.ensure_dir_exists(fft_dir)
+
+        # Split into chunks
 
         print('Converting wav to fft...')
         wav_dir = os.path.join(data_dir, 'wav')
@@ -76,7 +75,27 @@ class datatools(object):
 		block_lists.append(new_block)
 		num_samples_so_far += block_size
 
-            np.save(np_data_file, block_lists)
+            # Create X and Y training sets
+
+            start_index = 0
+            training_instances = len(block_lists)-seql
+            freq_bins = len(block_lists[0])
+            X_train = np.zeros((training_instances, seql, freq_bins))
+            #Y_train = np.zeros((training_instances, 1, freq_bins))
+            Y_train = np.zeros((training_instances, freq_bins))
+
+            while start_index+seql+1 < len(block_lists):
+                print(start_index)
+                for i in range(seql):
+                    for j in range(freq_bins):
+                        X_train[start_index][i][j] = block_lists[start_index+i][j]
+                for j in range(freq_bins):
+                    Y_train[start_index][j] = block_lists[start_index+seql+1][j]
+
+                start_index = start_index+1
+
+            np.save(np_data_file+'_x', X_train)
+            np.save(np_data_file+'_y', Y_train)
 
         return block_lists
 

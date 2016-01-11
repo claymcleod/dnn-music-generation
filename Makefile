@@ -3,9 +3,6 @@
 # Clay L. McLeod, 2016-01-08 19:40
 #
 
-all:
-	@echo "Makefile needs your attention"
-
 convert:
 	@echo ""
 	@python convert.py
@@ -13,6 +10,10 @@ convert:
 reconstruct:
 	@echo ""
 	@python -Wignore reconstruct.py
+
+train:
+	@echo ""
+	@python -Wignore train.py
 
 copyffttogen:
 	@echo ""
@@ -24,5 +25,8 @@ test: clean convert copyffttogen reconstruct
 .PHONY: clean
 clean:
 	@rm -rf ./data/tmp ./data/wav ./data/fft ./data/gen ./data/out
+
+spectrogram:
+	@python -Wignore spectrogram.py
 # vim:ft=make
 #

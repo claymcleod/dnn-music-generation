@@ -50,7 +50,8 @@ for f in filenames:
 
     print("-- Preparing data...")
     output = np.zeros(X_train.shape)	
-    output = np.append(X_train[0:20], output, axis=0)
+    output = np.append(X_train[0:seql], output, axis=0)
+    fft_output = np.zeros((X_train.shape[0]-seql, X_train.shape[2]))
 
     print("-- Building model...")
     model = nntools.build_lstm_network(X_train.shape[2], 2048)
@@ -72,8 +73,10 @@ for f in filenames:
         for k in range(0, seql-1):
 	    for x in range(0, output.shape[2]):
 		output[i+seql+1][k][x] = next_val[k][x]
+		fft_output[i][x] = next_val[seql-1][x]
 
 	i = i + 1
 
     print("\n-- Saving numpy array...")
-    np.save(trained_file_location, output)
+    print("Shape of output: {}".format(fft_output.shape))
+    np.save(trained_file_location, fft_output)

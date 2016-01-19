@@ -14,14 +14,7 @@ import matplotlib.pyplot as plt
 from config import config
 from tools.datatools import datatools
 from scipy.io import wavfile
-
-def write_flush(s):
-    '''
-    Quick helper method to write to std then flush
-    '''
-
-    sys.stdout.write(s)
-    sys.stdout.flush()
+from tools.terminaltools import write_flush
 
 _config = config.get_config()
 data_dir = _config['data_dir']

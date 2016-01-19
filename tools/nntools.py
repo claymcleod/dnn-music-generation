@@ -15,6 +15,11 @@ from keras.layers.recurrent import LSTM
 class nntools(object):
 
     @staticmethod
+    def get_current_model(freq_dim, hidden_dim):
+        return nntools.build_lstm_network(freq_dim, hidden_dim)
+
+
+    @staticmethod
     def build_lstm_network(freq_dim, hidden_dim):
 
         # Define vanilla sequential model

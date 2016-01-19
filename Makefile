@@ -6,20 +6,36 @@
 default: convert train generate reconstruct
 
 convert:
-	@echo "# Running 'Convert'"
+	@echo ""
+	@echo "###########"
+	@echo "# Convert #"
+	@echo "###########"
+	@echo ""
 	@python -Wignore convert.py
 	@rm -rf ./data/tmp
 
 train:
-	@echo "# Running 'Train'"
+	@echo ""
+	@echo "#########"
+	@echo "# Train #"
+	@echo "#########"
+	@echo ""
 	@python -Wignore train.py
 
 generate:
-	@echo "# Running 'Generate'"
+	@echo ""
+	@echo "############"
+	@echo "# Generate #"
+	@echo "############"
+	@echo ""
 	@python -Wignore generate.py
 
 reconstruct:
-	@echo "# Running 'Reconstruct'"
+	@echo ""
+	@echo "###############"
+	@echo "# Reconstruct #"
+	@echo "###############"
+	@echo ""
 	@python -Wignore reconstruct.py
 
 copyffttogen:

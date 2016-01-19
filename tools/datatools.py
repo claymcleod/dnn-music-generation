@@ -29,22 +29,35 @@ class datatools(object):
         datatools.ensure_dir_exists(wav_dir)
 
         # Begin MP3 processing
-        print('Converting to stereo to mono...')
         data_glob_path = os.path.join(data_dir, '*.mp3')
-        for data_filename in glob.glob(data_glob_path):
-            name = data_filename.split('/')[-1]
-            tmp_filename = os.path.join(tmp_dir, name)
-            cmd = 'lame --quiet -a -m m {} {}'.format(data_filename, tmp_filename)
-            os.system(cmd)
+	mp3_data_files = glob.glob(data_glob_path)
+	if len(mp3_data_files) > 0:
+            print('Converting to stereo to mono...')
+            for data_filename in mp3_data_files:
+                name = data_filename.split('/')[-1]
+                tmp_filename = os.path.join(tmp_dir, name)
+                cmd = 'lame --quiet -a -m m {} {}'.format(data_filename, tmp_filename)
+                os.system(cmd)
 
-        print('Converting to mono to wav...')
         tmp_data_glob_path = os.path.join(tmp_dir, '*.mp3')
-        for tmp_filename in glob.glob(tmp_data_glob_path):
-            name = tmp_filename.split('/')[-1].replace('.mp3','.wav')
-            wav_filename = os.path.join(wav_dir, name)
-            cmd = 'lame --quiet --decode {} {} --resample 44.1'.format(tmp_filename, wav_filename)
-            os.system(cmd)
-
+	tmp_data_files = glob.glob(tmp_data_glob_path)
+	if len(tmp_data_files) > 0:	
+            print('Converting to mono to wav...')
+            for tmp_filename in tmp_data_files:
+                name = tmp_filename.split('/')[-1].replace('.mp3','.wav')
+                wav_filename = os.path.join(wav_dir, name)
+                cmd = 'lame --quiet --decode {} {} --resample 44.1'.format(tmp_filename, wav_filename)
+                os.system(cmd)
+	
+	data_folder_wav_glob_path = os.path.join(data_dir, '*.wav')
+	wav_files_in_data_folder = glob.glob(data_folder_wav_glob_path)
+	if len(wav_files_in_data_folder) > 0:
+	    print('Moving existing wavs...')
+	    for wav_filename in wav_files_in_data_folder:
+	        name = wav_filename.split('/')[-1]
+	        new_wav_filename = os.path.join(wav_dir, name)
+	        cmd = 'cp {} {}'.format(wav_filename, new_wav_filename)
+	        os.system(cmd)
     @staticmethod
     def convert_wav_to_fft(data_dir, block_size, seql):
 

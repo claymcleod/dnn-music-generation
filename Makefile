@@ -3,21 +3,24 @@
 # Clay L. McLeod, 2016-01-08 19:40
 #
 
+default: convert train generate reconstruct
+
 convert:
-	@echo ""
+	@echo "# Running 'Convert'"
 	@python -Wignore convert.py
+	@rm -rf ./data/tmp
+
+train:
+	@echo "# Running 'Train'"
+	@python -Wignore train.py
 
 generate:
-	@echo ""
+	@echo "# Running 'Generate'"
 	@python -Wignore generate.py
 
 reconstruct:
-	@echo ""
+	@echo "# Running 'Reconstruct'"
 	@python -Wignore reconstruct.py
-
-train:
-	@echo ""
-	@python -Wignore train.py
 
 copyffttogen:
 	@echo ""

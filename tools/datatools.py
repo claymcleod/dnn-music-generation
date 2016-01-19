@@ -8,6 +8,7 @@ from __future__ import print_function
 
 import os, glob
 import numpy as np
+from terminal_tools import write_flush
 
 from scipy.io import wavfile
 
@@ -32,32 +33,36 @@ class datatools(object):
         data_glob_path = os.path.join(data_dir, '*.mp3')
 	mp3_data_files = glob.glob(data_glob_path)
 	if len(mp3_data_files) > 0:
-            print('Converting to stereo to mono...')
+            write_flush('Converting stereo to mono...')
             for data_filename in mp3_data_files:
                 name = data_filename.split('/')[-1]
                 tmp_filename = os.path.join(tmp_dir, name)
                 cmd = 'lame --quiet -a -m m {} {}'.format(data_filename, tmp_filename)
                 os.system(cmd)
+            write_flush('finished.\n')
 
         tmp_data_glob_path = os.path.join(tmp_dir, '*.mp3')
 	tmp_data_files = glob.glob(tmp_data_glob_path)
-	if len(tmp_data_files) > 0:	
-            print('Converting to mono to wav...')
+	if len(tmp_data_files) > 0:
+            write_flush('Converting to mono to wav...')
             for tmp_filename in tmp_data_files:
                 name = tmp_filename.split('/')[-1].replace('.mp3','.wav')
                 wav_filename = os.path.join(wav_dir, name)
                 cmd = 'lame --quiet --decode {} {} --resample 44.1'.format(tmp_filename, wav_filename)
                 os.system(cmd)
-	
+            write_flush('finished.\n')
+
 	data_folder_wav_glob_path = os.path.join(data_dir, '*.wav')
 	wav_files_in_data_folder = glob.glob(data_folder_wav_glob_path)
 	if len(wav_files_in_data_folder) > 0:
-	    print('Moving existing wavs...')
+	    write_flush('Moving existing wavs...')
 	    for wav_filename in wav_files_in_data_folder:
 	        name = wav_filename.split('/')[-1]
 	        new_wav_filename = os.path.join(wav_dir, name)
 	        cmd = 'cp {} {}'.format(wav_filename, new_wav_filename)
 	        os.system(cmd)
+            write_flush('finished.\n')
+
     @staticmethod
     def convert_wav_to_fft(data_dir, block_size, seql):
 
@@ -66,49 +71,59 @@ class datatools(object):
 
         # Split into chunks
 
-        print('Converting wav to fft...')
         wav_dir = os.path.join(data_dir, 'wav')
         wav_glob_path = os.path.join(wav_dir, '*.wav')
-        for wav_data_file in glob.glob(wav_glob_path):
-            np_filename = wav_data_file.split('/')[-1].replace('.wav','')
-            np_data_file = os.path.join(fft_dir, np_filename)
-            wav_np_array = wavfile.read(wav_data_file)[1].astype('float32') / 32767.0
+        wav_files = glob.glob(wav_glob_path)
+        block_lists = []
 
-            block_lists = []
-            total_samples = wav_np_array.shape[0]
-	    num_samples_so_far = 0
-	    while(num_samples_so_far < total_samples):
-	        block = wav_np_array[num_samples_so_far:num_samples_so_far+block_size]
-		if(block.shape[0] < block_size):
-		    padding = np.zeros((block_size - block.shape[0],))
-		    block = np.concatenate((block, padding))
-                fft_block = np.fft.fft(block)
-                new_block = np.concatenate((np.real(fft_block), np.imag(fft_block)))
-		block_lists.append(new_block)
-		num_samples_so_far += block_size
+        if len(wav_files) > 0:
+            write_flush('Converting wav to fft...')
+            for wav_data_file in glob.glob(wav_glob_path):
+                np_filename = wav_data_file.split('/')[-1].replace('.wav','')
+                np_data_file = os.path.join(fft_dir, np_filename)
+                wav_np_array = wavfile.read(wav_data_file)[1].astype('float32') / 32767.0
 
-            # Create X and Y training sets
+                block_lists = []
+                total_samples = wav_np_array.shape[0]
+	        num_samples_so_far = 0
+	        while(num_samples_so_far < total_samples):
+	            block = wav_np_array[num_samples_so_far:num_samples_so_far+block_size]
+		    if(block.shape[0] < block_size):
+		        padding = np.zeros((block_size - block.shape[0],))
+		        block = np.concatenate((block, padding))
+                    fft_block = np.fft.fft(block)
+                    new_block = np.concatenate((np.real(fft_block), np.imag(fft_block)))
+		    block_lists.append(new_block)
+		    num_samples_so_far += block_size
 
-            start_index = 0
-            training_instances = len(block_lists)-seql
-            freq_bins = len(block_lists[0])
-            X_train = np.zeros((training_instances, seql, freq_bins))
-            #Y_train = np.zeros((training_instances, 1, freq_bins))
-            Y_train = np.zeros((training_instances, freq_bins))
+                # Create X and Y training sets
 
-            while start_index+seql+1 < len(block_lists):
-                print(str(start_index)+"/"+str(len(block_lists)-seql))
+                start_index = 0
+                training_instances = len(block_lists)-seql
+                freq_bins = len(block_lists[0])
+                X_train = np.zeros((training_instances, seql, freq_bins))
+                Y_train = np.zeros((training_instances, freq_bins))
 
-                for i in range(seql):
+                while True:
+                    if start_index+seql+1 < len(block_lists):
+                        progress_str = '\rConverting wav to fft...({}/{})'.format(start_index, len(block_lists)-seql-1)
+                        write_flush(progress_str)
+                    else:
+                        write_flush('\rConverting wav to fft...finished.\n')
+                        break
+
+                    for i in range(seql):
+                        for j in range(freq_bins):
+                            X_train[start_index][i][j] = block_lists[start_index+i][j]
                     for j in range(freq_bins):
-                        X_train[start_index][i][j] = block_lists[start_index+i][j]
-                for j in range(freq_bins):
-                    Y_train[start_index][j] = block_lists[start_index+seql+1][j]
+                        Y_train[start_index][j] = block_lists[start_index+seql+1][j]
 
-                start_index = start_index+1
+                    start_index = start_index+1
 
-            np.save(np_data_file+'_x', X_train)
-            np.save(np_data_file+'_y', Y_train)
+                write_flush('Saving fft file...')
+                np.save(np_data_file+'_x', X_train)
+                np.save(np_data_file+'_y', Y_train)
+                write_flush('finished.\n')
 
         return block_lists
 

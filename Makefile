@@ -5,7 +5,11 @@
 
 convert:
 	@echo ""
-	@python convert.py
+	@python -Wignore convert.py
+
+generate:
+	@echo ""
+	@python -Wignore generate.py
 
 reconstruct:
 	@echo ""
@@ -24,7 +28,7 @@ test: clean convert copyffttogen reconstruct
 
 .PHONY: clean
 clean:
-	@rm -rf ./data/tmp ./data/wav ./data/fft ./data/gen ./data/out ./data/plot
+	@rm -rf ./data/tmp ./data/wav ./data/fft ./data/gen ./data/out ./data/plot ./data/weights
 
 spectrogram:
 	@python -Wignore spectrogram.py

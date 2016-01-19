@@ -18,6 +18,7 @@ from tools.nntools import nntools
 _config = config.get_config()
 data_dir = _config['data_dir']
 seql = _config['seql']
+generate_x_blocks = _config['generate_x_blocks'] 
 
 fft_dir = os.path.join(data_dir, 'fft')
 fft_glob = os.path.join(fft_dir, '*.npy')
@@ -49,9 +50,9 @@ for f in filenames:
     print()
 
     print("-- Preparing data...")
-    output = np.zeros(X_train.shape)	
+    output = np.zeros((generate_x_blocks+seql, X_train.shape[1], X_train.shape[2]))	
     output = np.append(X_train[0:seql], output, axis=0)
-    fft_output = np.zeros((X_train.shape[0]-seql, X_train.shape[2]))
+    fft_output = np.zeros((generate_x_blocks, X_train.shape[2]))
 
     print("-- Building model...")
     model = nntools.build_lstm_network(X_train.shape[2], 2048)
@@ -63,9 +64,9 @@ for f in filenames:
     i = 0
     l = len(X_train)
     while True:
-	sys.stdout.write("-- Generating... ({}/{})\r".format(i+seql+1, output.shape[0]))
+	sys.stdout.write("-- Generating... ({}/{})\r".format(i, fft_output.shape[0]))
 	sys.stdout.flush()
-	if i+seql+1 >= output.shape[0]:
+	if i >= fft_output.shape[0]:
 	    break
 
 	next_val = model.predict(output[i:i+seql])
@@ -73,10 +74,12 @@ for f in filenames:
         for k in range(0, seql-1):
 	    for x in range(0, output.shape[2]):
 		output[i+seql+1][k][x] = next_val[k][x]
-		fft_output[i][x] = next_val[seql-1][x]
+		fft_output[i][x] = next_val[0][x]
 
 	i = i + 1
 
     print("\n-- Saving numpy array...")
     print("Shape of output: {}".format(fft_output.shape))
+    for x in fft_output:
+	print(np.max(x))
     np.save(trained_file_location, fft_output)

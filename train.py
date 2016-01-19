@@ -19,6 +19,8 @@ from tools.nntools import nntools
 
 _config = config.get_config()
 data_dir = _config['data_dir']
+epochs_per_round = _config['epochs_per_round']
+max_training_iterations = _config['max_training_iterations']
 
 fft_dir = os.path.join(data_dir, 'fft')
 fft_glob = os.path.join(fft_dir, '*.npy')
@@ -39,8 +41,15 @@ for f in filenames:
 
     print(weight_file)
     model = nntools.build_lstm_network(X_train.shape[2], 2048)
-    if os.path.exists(weight_file):
-	model.load_weights(weight_file)
-	print("Loaded previous weights...")
-    checkpointer = ModelCheckpoint(filepath=weight_file, verbose=1, save_best_only=True)
-    model.fit(X_train, y_train, nb_epoch=100000, validation_split=0.2, batch_size=128, callbacks=[checkpointer])
+    i = 0
+    while True:
+        if i >= max_training_iterations:
+	    break
+
+    	if os.path.exists(weight_file):
+	    model.load_weights(weight_file)
+	    print("Loaded previous weights...")
+        checkpointer = ModelCheckpoint(filepath=weight_file, verbose=1, save_best_only=True)
+        model.fit(X_train, y_train, nb_epoch=epochs_per_round, validation_split=0.2, batch_size=128, callbacks=[checkpointer])
+	
+	i = i + epochs_per_round

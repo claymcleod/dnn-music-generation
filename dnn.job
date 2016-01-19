@@ -1,0 +1,4 @@
+#PBS -o output.txt
+#PBS -e error.txt
+
+THEANO_FLAGS=mode=FAST_RUN,device=gpu,floatX=float32 python train.py

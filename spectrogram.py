@@ -7,8 +7,8 @@
 
 from __future__ import print_function
 
-import os, glob, sys
-import numpy as np
+import glob
+import os
 import matplotlib.pyplot as plt
 
 from config import config

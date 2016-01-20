@@ -3,6 +3,9 @@
 # Clay L. McLeod, 2016-01-08 19:40
 #
 
+# Set to either 'cpu' or 'gpu', based on your configuration
+device=cpu
+
 default: convert train generate reconstruct
 
 convert:
@@ -11,8 +14,7 @@ convert:
 	@echo "# Convert #"
 	@echo "###########"
 	@echo ""
-	@python -Wignore convert.py
-	@rm -rf ./data/tmp
+	@THEANO_FLAGS=mode=FAST_RUN,device=${device},floatX=float32 python -Wignore convert.py
 
 train:
 	@echo ""
@@ -20,7 +22,7 @@ train:
 	@echo "# Train #"
 	@echo "#########"
 	@echo ""
-	@python -Wignore train.py
+	@THEANO_FLAGS=mode=FAST_RUN,device=${device},floatX=float32 python -Wignore train.py
 
 generate:
 	@echo ""
@@ -28,7 +30,7 @@ generate:
 	@echo "# Generate #"
 	@echo "############"
 	@echo ""
-	@python -Wignore generate.py
+	@THEANO_FLAGS=mode=FAST_RUN,device=${device},floatX=float32 python -Wignore generate.py
 
 reconstruct:
 	@echo ""
@@ -36,7 +38,10 @@ reconstruct:
 	@echo "# Reconstruct #"
 	@echo "###############"
 	@echo ""
-	@python -Wignore reconstruct.py
+	@THEANO_FLAGS=mode=FAST_RUN,device=${device},floatX=float32 python -Wignore reconstruct.py
+
+spectrogram:
+	@python -Wignore spectrogram.py
 
 copyffttogen:
 	@echo ""
@@ -47,9 +52,4 @@ test: clean convert copyffttogen reconstruct
 
 .PHONY: clean
 clean:
-	@rm -rf ./data/tmp ./data/wav ./data/fft ./data/gen ./data/out ./data/plot ./data/weights
-
-spectrogram:
-	@python -Wignore spectrogram.py
-# vim:ft=make
-#
+	@rm -rf ./data/*/

@@ -6,7 +6,6 @@
 
 from __future__ import print_function
 
-import os, glob
 
 from keras.models import Sequential
 from keras.layers.core import Dense, TimeDistributedDense

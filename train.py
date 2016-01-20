@@ -7,8 +7,6 @@
 
 from __future__ import print_function
 
-import os, glob
-import numpy as np
 
 from config import config
 from tools.datatools import datatools

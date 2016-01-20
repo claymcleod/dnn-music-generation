@@ -226,7 +226,6 @@ class datatools(object):
 
         for f in filenames:
             X_train = np.load(f+'_x.npy')
-            y_train = np.load(f+'_y.npy')
             filename = f.split('/')[-1]
             weight_file = os.path.join(weights_dir, filename+'.hdf5')
             trained_file_location = os.path.join(gen_dir, filename)
@@ -248,7 +247,6 @@ class datatools(object):
             write_flush("finished.\n")
 
             i = 0
-            l = len(X_train)
             write_flush("-- Generating...")
             while True:
 	        write_flush("\r-- Generating... ({}/{})".format(i, fft_output.shape[0]))

@@ -5,14 +5,9 @@
 #
 # Distributed under terms of the MIT license.
 
-import os, sys, glob
-import numpy as np
 
-from sets import Set
 from config import config
 from tools.datatools import datatools
-from tools.nntools import nntools
-from tools.terminaltools import write_flush
 
 _config = config.get_config()
 data_dir = _config['data_dir']

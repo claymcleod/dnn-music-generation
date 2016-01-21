@@ -4,7 +4,7 @@
 #
 
 # Set to either 'cpu' or 'gpu', based on your configuration
-device=cpu
+device=gpu
 
 default: convert train generate reconstruct
 

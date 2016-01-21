@@ -258,7 +258,7 @@ class datatools(object):
                 for k in range(0, seql-1):
 	            for x in range(0, output.shape[2]):
 		        output[i+seql+1][k][x] = next_val[k][x]
-		        fft_output[i][x] = next_val[0][x]
+		        fft_output[i][x] = next_val[seql-1][x]
 
 	        i = i + 1
 

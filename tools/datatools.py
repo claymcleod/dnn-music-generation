@@ -166,7 +166,7 @@ class datatools(object):
 
 
     @staticmethod
-    def train_dnn(data_dir, epochs_per_round, max_training_iterations):
+    def train_dnn(data_dir, epochs_per_round, max_training_iterations, hidden_dim):
         fft_dir = os.path.join(data_dir, 'fft')
         fft_glob = os.path.join(fft_dir, '*.npy')
 
@@ -186,7 +186,7 @@ class datatools(object):
 
             write_flush('# Training on \'{}\'\n\n'.format(filename))
             write_flush('-- Building dnn...')
-            model = nntools.get_current_model(X_train.shape[2], 2048)
+            model = nntools.get_current_model(X_train.shape[2], hidden_dim)
             write_flush('finished.       \n')
             checkpointer = ModelCheckpoint(filepath=weight_file, verbose=0, save_best_only=True)
             i = 0
@@ -199,7 +199,7 @@ class datatools(object):
     	        if os.path.exists(weight_file):
 	            model.load_weights(weight_file)
 
-                model.fit(X_train, y_train, nb_epoch=epochs_per_round, verbose=0, validation_split=0.1, batch_size=64, callbacks=[checkpointer])
+                model.fit(X_train, y_train, nb_epoch=epochs_per_round, verbose=0, validation_split=0.1, callbacks=[checkpointer])
 
 	        i = i + epochs_per_round
                 write_flush('\r-- Training model... ({}/{})'.format(i, max_training_iterations))
@@ -208,7 +208,7 @@ class datatools(object):
 
 
     @staticmethod
-    def generate_from_dnn(data_dir, seql, generate_x_blocks):
+    def generate_from_dnn(data_dir, seql, generate_x_blocks, hidden_dim):
 
         fft_dir = os.path.join(data_dir, 'fft')
         fft_glob = os.path.join(fft_dir, '*.npy')
@@ -238,7 +238,7 @@ class datatools(object):
             write_flush("finished.\n")
 
             write_flush("-- Building dnn...")
-            model = nntools.get_current_model(X_train.shape[2], 2048)
+            model = nntools.get_current_model(X_train.shape[2], hidden_dim)
             write_flush("finished.\n")
 
             write_flush("-- Loading weights...")

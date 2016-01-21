@@ -15,5 +15,6 @@ _config = config.get_config()
 data_dir = _config['data_dir']
 epochs_per_round = _config['epochs_per_round']
 max_training_iterations = _config['max_training_iterations']
+hidden_dim = _config['hidden_dim']
 
-datatools.train_dnn(data_dir, epochs_per_round, max_training_iterations)
+datatools.train_dnn(data_dir, epochs_per_round, max_training_iterations, hidden_dim)

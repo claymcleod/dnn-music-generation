@@ -13,5 +13,6 @@ _config = config.get_config()
 data_dir = _config['data_dir']
 seql = _config['seql']
 generate_x_blocks = _config['generate_x_blocks']
+hidden_dim = _config['hidden_dim']
 
-datatools.generate_from_dnn(data_dir, seql, generate_x_blocks)
+datatools.generate_from_dnn(data_dir, seql, generate_x_blocks, hidden_dim)

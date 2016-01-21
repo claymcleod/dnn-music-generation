@@ -16,8 +16,8 @@ class nntools(object):
 
     @staticmethod
     def get_current_model(freq_dim, hidden_dim):
-        #return nntools.build_lstm_network(freq_dim, hidden_dim)
-        return nntools.build_bidirectional_lstm_network(freq_dim, hidden_dim)
+        return nntools.build_lstm_network(freq_dim, hidden_dim)
+        #return nntools.build_bidirectional_lstm_network(freq_dim, hidden_dim)
 
 
     @staticmethod
